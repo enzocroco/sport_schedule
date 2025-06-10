@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mon Programme d'Entraînement</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        color: white;
+      }
+
+      .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .current-day {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        text-align: center;
+      }
+
+      .current-day h2 {
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+      }
+
+      .day-selector {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .day-btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        min-width: 120px;
+      }
+
+      .day-btn.day-1 {
+        background: #ff6b6b;
+        color: white;
+      }
+      .day-btn.day-2 {
+        background: #4ecdc4;
+        color: white;
+      }
+      .day-btn.day-3 {
+        background: #45b7d1;
+        color: white;
+      }
+      .day-btn.day-4 {
+        background: #ffa726;
+        color: white;
+      }
+      .day-btn.day-5 {
+        background: #ef5350;
+        color: white;
+      }
+      .day-btn.day-6 {
+        background: #424242;
+        color: white;
+      }
+      .day-btn.day-7 {
+        background: #8d6e63;
+        color: white;
+      }
+
+      .day-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .day-btn.active {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        transform: scale(1.05);
+      }
+
+      .workout-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: none;
+      }
+
+      .workout-card.active {
+        display: block;
+        animation: fadeIn 0.5s ease-in;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .workout-title {
+        font-size: 2rem;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .day-1 .workout-title {
+        border-color: #ff6b6b;
+        color: #ff6b6b;
+      }
+      .day-2 .workout-title {
+        border-color: #4ecdc4;
+        color: #4ecdc4;
+      }
+      .day-3 .workout-title {
+        border-color: #45b7d1;
+        color: #45b7d1;
+      }
+      .day-4 .workout-title {
+        border-color: #ffa726;
+        color: #ffa726;
+      }
+      .day-5 .workout-title {
+        border-color: #ef5350;
+        color: #ef5350;
+      }
+      .day-6 .workout-title {
+        border-color: #424242;
+        color: #424242;
+      }
+      .day-7 .workout-title {
+        border-color: #8d6e63;
+        color: #8d6e63;
+      }
+
+      .exercise-list {
+        list-style: none;
+      }
+
+      .exercise-item {
+        background: #f8f9fa;
+        margin-bottom: 15px;
+        padding: 20px;
+        border-radius: 15px;
+        border-left: 5px solid;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .day-1 .exercise-item {
+        border-color: #ff6b6b;
+      }
+      .day-2 .exercise-item {
+        border-color: #4ecdc4;
+      }
+      .day-3 .exercise-item {
+        border-color: #45b7d1;
+      }
+      .day-4 .exercise-item {
+        border-color: #ffa726;
+      }
+      .day-5 .exercise-item {
+        border-color: #ef5350;
+      }
+      .day-6 .exercise-item {
+        border-color: #424242;
+      }
+      .day-7 .exercise-item {
+        border-color: #8d6e63;
+      }
+
+      .exercise-item:hover {
+        transform: translateX(10px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .exercise-item.completed {
+        background: #e8f5e8;
+        opacity: 0.7;
+      }
+
+      .exercise-name {
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+
+      .exercise-sets {
+        color: #666;
+        font-size: 1rem;
+        margin-top: 5px;
+      }
+
+      .exercise-details {
+        font-style: italic;
+        color: #888;
+        font-size: 0.9rem;
+        margin-top: 3px;
+      }
+
+      .check-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        border: 2px solid #ddd;
+        background: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+      }
+
+      .check-btn.checked {
+        background: #4caf50;
+        border-color: #4caf50;
+        color: white;
+      }
+
+      .rest-day {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+      }
+
+      .rest-day h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+      }
+
+      .rest-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+      }
+
+      .progress-bar {
+        background: rgba(255, 255, 255, 0.3);
+        height: 8px;
+        border-radius: 4px;
+        margin-top: 20px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: #4caf50;
+        transition: width 0.3s ease;
+        border-radius: 4px;
+      }
+
+      .progress-text {
+        text-align: center;
+        margin-top: 10px;
+        color: white;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 10px;
+        }
+
+        .header h1 {
+          font-size: 2rem;
+        }
+
+        .day-btn {
+          min-width: 100px;
+          padding: 10px 15px;
+        }
+
+        .workout-card {
+          padding: 20px;
+        }
+
+        .exercise-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .check-btn {
+          align-self: flex-end;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>💪 Mon Programme d'Entraînement</h1>
+        <p>Restez motivé et suivez vos progrès jour après jour</p>
+      </div>
+
+      <div class="current-day">
+        <h2 id="current-day-text">Jour 1 - Pectoraux & Triceps</h2>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-text" id="progress-text">0% complété</div>
+      </div>
+
+      <div class="day-selector">
+        <button class="day-btn day-1 active" onclick="showDay(1)">
+          Jour 1
+        </button>
+        <button class="day-btn day-2" onclick="showDay(2)">Jour 2</button>
+        <button class="day-btn day-3" onclick="showDay(3)">Jour 3</button>
+        <button class="day-btn day-4" onclick="showDay(4)">Jour 4</button>
+        <button class="day-btn day-5" onclick="showDay(5)">Jour 5</button>
+        <button class="day-btn day-6" onclick="showDay(6)">Jour 6</button>
+        <button class="day-btn day-7" onclick="showDay(7)">Jour 7</button>
+      </div>
+
+      <!-- Jour 1 -->
+      <div class="workout-card day-1 active" id="day-1">
+        <div class="workout-title">🔥 Jour 1 – Pectoraux & Triceps</div>
+        <ul class="exercise-list">
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Pompes</div>
+              <div class="exercise-sets">4 × 12</div>
+              <div class="exercise-details">
+                Variante avec les pieds surélevés si trop facile
+              </div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">
+                Développé couché au sol avec haltère
+              </div>
+              <div class="exercise-sets">4 × 10</div>
+              <div class="exercise-details">1 bras à la fois</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Pompes diamant</div>
+              <div class="exercise-sets">3 × 10</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">
+                Extensions triceps au-dessus de la tête
+              </div>
+              <div class="exercise-sets">3 × 12</div>
+              <div class="exercise-details">1 bras</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Gainage bras tendus</div>
+              <div class="exercise-sets">3 × 45 sec</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Jour 2 -->
+      <div class="workout-card day-2" id="day-2">
+        <div class="workout-title">🟦 Jour 2 – Repos ou Escalade</div>
+        <div class="rest-day">
+          <div class="rest-icon">🧗‍♂️</div>
+          <h3>Journée de récupération</h3>
+          <p>
+            Profitez de cette journée pour vous reposer ou pratiquer l'escalade
+            selon votre forme.
+          </p>
+        </div>
+      </div>
+
+      <!-- Jour 3 -->
+      <div class="workout-card day-3" id="day-3">
+        <div class="workout-title">🟨 Jour 3 – Épaules & Dos (complément)</div>
+        <ul class="exercise-list">
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Rowing à un bras avec haltère</div>
+              <div class="exercise-sets">4 × 10</div>
+              <div class="exercise-details">Focus sur le contrôle</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Oiseau (reverse fly) avec haltère</div>
+              <div class="exercise-sets">3 × 12</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Élévations latérales</div>
+              <div class="exercise-sets">3 × 12</div>
+              <div class="exercise-details">1 haltère</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Shrugs (haussement d'épaules)</div>
+              <div class="exercise-sets">3 × 15</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Superman au sol</div>
+              <div class="exercise-sets">3 × 30 sec</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Jour 4 -->
+      <div class="workout-card day-4" id="day-4">
+        <div class="workout-title">🟧 Jour 4 – Core & Équilibre</div>
+        <ul class="exercise-list">
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Gainage frontal</div>
+              <div class="exercise-sets">3 × 1 min</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Russian twists avec haltère</div>
+              <div class="exercise-sets">3 × 20</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Planche latérale</div>
+              <div class="exercise-sets">2 × 45 sec / côté</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Dead bug</div>
+              <div class="exercise-sets">3 × 12</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Hollow hold</div>
+              <div class="exercise-sets">3 × 20–30 sec</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Jour 5 -->
+      <div class="workout-card day-5" id="day-5">
+        <div class="workout-title">🟥 Jour 5 – Repos ou Escalade</div>
+        <div class="rest-day">
+          <div class="rest-icon">🧗‍♂️</div>
+          <h3>Journée de récupération</h3>
+          <p>
+            Profitez de cette journée pour vous reposer ou pratiquer l'escalade
+            selon votre forme.
+          </p>
+        </div>
+      </div>
+
+      <!-- Jour 6 -->
+      <div class="workout-card day-6" id="day-6">
+        <div class="workout-title">⬛ Jour 6 – Full Body / Correctifs</div>
+        <ul class="exercise-list">
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Pompes inclinées</div>
+              <div class="exercise-sets">3 × 15</div>
+              <div class="exercise-details">Contre table/mur</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Rowing unilatéral</div>
+              <div class="exercise-sets">3 × 10</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Curl biceps unilatéral</div>
+              <div class="exercise-sets">3 × 12</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Squats sautés</div>
+              <div class="exercise-sets">3 × 15</div>
+              <div class="exercise-details">
+                Pour garder un peu de bas du corps
+              </div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+          <li class="exercise-item" onclick="toggleExercise(this)">
+            <div>
+              <div class="exercise-name">Farmer walk avec haltère</div>
+              <div class="exercise-sets">3 × 30 sec / bras</div>
+              <div class="exercise-details">Si espace</div>
+            </div>
+            <div class="check-btn">✓</div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Jour 7 -->
+      <div class="workout-card day-7" id="day-7">
+        <div class="workout-title">🟫 Jour 7 – Repos complet</div>
+        <div class="rest-day">
+          <div class="rest-icon">😴</div>
+          <h3>Repos complet</h3>
+          <p>
+            Jour de récupération totale. Profitez-en pour vous détendre et
+            préparer la semaine suivante !
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentDay = 1;
+      const dayTitles = {
+        1: "Jour 1 - Pectoraux & Triceps",
+        2: "Jour 2 - Repos ou Escalade",
+        3: "Jour 3 - Épaules & Dos",
+        4: "Jour 4 - Core & Équilibre",
+        5: "Jour 5 - Repos ou Escalade",
+        6: "Jour 6 - Full Body / Correctifs",
+        7: "Jour 7 - Repos complet",
+      };
+
+      function showDay(day) {
+        // Masquer tous les jours
+        document.querySelectorAll(".workout-card").forEach((card) => {
+          card.classList.remove("active");
+        });
+
+        // Masquer tous les boutons actifs
+        document.querySelectorAll(".day-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        // Afficher le jour sélectionné
+        document.getElementById(`day-${day}`).classList.add("active");
+        document.querySelector(`.day-${day}`).classList.add("active");
+
+        // Mettre à jour le titre
+        document.getElementById("current-day-text").textContent =
+          dayTitles[day];
+
+        currentDay = day;
+        updateProgress();
+      }
+
+      function toggleExercise(element) {
+        element.classList.toggle("completed");
+        const checkBtn = element.querySelector(".check-btn");
+        checkBtn.classList.toggle("checked");
+        updateProgress();
+      }
+
+      function updateProgress() {
+        const currentCard = document.getElementById(`day-${currentDay}`);
+        const exercises = currentCard.querySelectorAll(".exercise-item");
+        const completed = currentCard.querySelectorAll(
+          ".exercise-item.completed",
+        );
+
+        if (exercises.length === 0) {
+          // Jour de repos
+          document.getElementById("progress-fill").style.width = "100%";
+          document.getElementById("progress-text").textContent =
+            "Jour de repos";
+          return;
+        }
+
+        const percentage = Math.round(
+          (completed.length / exercises.length) * 100,
+        );
+        document.getElementById("progress-fill").style.width = percentage + "%";
+        document.getElementById("progress-text").textContent =
+          `${percentage}% complété (${completed.length}/${exercises.length})`;
+      }
+
+      // Initialiser le programme
+      updateProgress();
+
+      // Auto-détecter le jour de la semaine (optionnel)
+      function autoSelectDay() {
+        const today = new Date().getDay(); // 0 = dimanche, 1 = lundi, etc.
+        const dayMapping = {
+          1: 1, // lundi = jour 1
+          2: 2, // mardi = jour 2
+          3: 3, // mercredi = jour 3
+          4: 4, // jeudi = jour 4
+          5: 5, // vendredi = jour 5
+          6: 6, // samedi = jour 6
+          0: 7, // dimanche = jour 7
+        };
+
+        if (dayMapping[today]) {
+          showDay(dayMapping[today]);
+        }
+      }
+
+      // Décommentez la ligne suivante si vous voulez que le jour soit sélectionné automatiquement
+      // autoSelectDay();
+    </script>
+  </body>
+</html>
